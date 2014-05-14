@@ -9,7 +9,7 @@
 
 		<body>			
 			<%-- main content --%>
-			Click on one of these root categories to start navigating	
+			Click on one of these 	
 			<jsp:include page="startCategories.jsp"/>
 
 		</body>

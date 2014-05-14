@@ -1,4 +1,5 @@
 <jsp:include page="../includes/taglibs.jsp"/>
+root categories to start navigating
 <dspel:page>
 	<dspel:droplet name="/atg/dynamo/droplet/ForEach">
    		<dspel:param bean="/atg/userprofiling/Profile.catalog.allRootCategories"

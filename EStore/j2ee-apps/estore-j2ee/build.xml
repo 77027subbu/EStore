@@ -106,7 +106,10 @@
 	
 	<!-- Copies modules from the source control - Git in this case -->
 	<target name="copy.modules">
-		<copydir dest="${dynamo.root}" src="${git.path}"></copydir>
+		<mkdir dir="${dynamo.root}/${module.name}" />
+		<copy todir="${dynamo.root}/${module.name}" verbose="true">
+			<fileset dir="${git.path}/${module.name}" />
+		</copy>
 	</target>
 
 	<target name="build.modules" depends="create.dirs, compile.module, jar.modules" description="builds the module">

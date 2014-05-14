@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="eStoreCA" basedir="." default="deploy-ear-wl">
+<project name="eStore" basedir="." default="deploy-ear-wl">
 
 	<property environment="env" />
 
@@ -33,6 +33,7 @@
         <fileset dir="${dynamo.root}/DCS/lib">
             <include name="**/*.jar" />
         </fileset>
+		<!--
 		<fileset dir="${dynamo.root}/DAF/Endeca/Index/lib">
 			<include name="**/*.jar" />
 		</fileset>
@@ -45,6 +46,7 @@
 		<fileset dir="${dynamo.root}/DAF/Endeca/Assembler/lib">
 			<include name="**/*.jar" />
 		</fileset>
+		-->
 	</path>
 
 	<!-- Other things to watch for in the classpath -->
@@ -55,7 +57,7 @@
 	</patternset>
 
 	<!-- This target builds the module, assembles the ear and deploys it to the weblogic domain -->
-	<target name="deploy-ear-wl" depends="init, clean.modules, build.modules, build.ear" description="builds the module, assembles the ear and deploys it to WebLogic" />
+	<target name="deploy-ear-wl" depends="init, clean.modules, copy.modules, build.modules, build.ear" description="builds the module, assembles the ear and deploys it to WebLogic" />
 
     <target name="show.splash">
         <!--
@@ -87,21 +89,24 @@
         <sleep seconds="1"/>
         <echo>Progress: 10%</echo>
 	</target>
-
+	
 	<!-- Deletes the build and install directories -->
 	<target name="clean.modules" description="Deletes the contents of the install and build directories">
 		<echo message="Deleting..." />
 		<echo message="${wl.deploy}/${asmblr.ear}" />
 		<echo message="${install.dir}" />
+		<echo message="${dynamo.root}/${module.name}" />
 		<delete failonerror="false" includeemptydirs="true" verbose="true">
 			<fileset dir="${deploy.ear}" />
-			<fileset dir="${install.dir}" />
-            <fileset dir="${classes.dir}" />
-            <filename name="${prj.lib}/classes.jar" />
-			<filename name="${prj.lib}/config.jar" />
+			<fileset dir="${dynamo.root}/${module.name}" />
 		</delete>
         <sleep seconds="1"/>
         <echo>Progress: 20%</echo>
+	</target>
+	
+	<!-- Copies modules from the source control - Git in this case -->
+	<target name="copy.modules">
+		<copydir dest="${dynamo.root}" src="${git.path}"></copydir>
 	</target>
 
 	<target name="build.modules" depends="create.dirs, compile.module, jar.modules" description="builds the module">
@@ -131,7 +136,7 @@
 
 	<!-- Compiles the codebase -->
 	<target name="compile.module" description="Compiles the source code to the classes directory.">
-		<javac fork="true" executable="${env.JAVA_HOME}/bin/javac" compiler="modern" debug="true" srcdir="${src.dir}" destdir="${classes.dir}" failonerror="true" verbose="true">
+		<javac fork="true" executable="${JAVA_HOME}/bin/javac" compiler="modern" debug="true" srcdir="${src.dir}" destdir="${classes.dir}" failonerror="true" verbose="true">
 			<classpath path="${env.CLASSPATH}" />
 			<classpath refid="lib.classpath" />
 			<classpath refid="dynamo.classpath" />

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eStoreCA" basedir="." default="deploy-ear-wl">
+
+	<property environment="env" />
+
+	<property file="build.properties" />
+
+	<!-- Define an if and else task for use in this definition -->
+	<taskdef name="assemble-ear" onerror="report" classname="atg.appassembly.ant.CreateUnpackedEarTask" classpath="${dynamo.home}/lib/assembler.jar" />
+
+	<!-- The classpath for the project. -->
+	<path id="lib.classpath">
+		<fileset dir="${prj.lib}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+	</path>
+
+	<!-- The dynamo class path -->
+	<path id="dynamo.classpath">
+		<fileset dir="${dynamo.root}/DAS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DAS-UI/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DPS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DSS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+        <fileset dir="${dynamo.root}/DCS/lib">
+            <include name="**/*.jar" />
+        </fileset>
+		<fileset dir="${dynamo.root}/DAF/Endeca/Index/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DAF/Endeca/Reader/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DAF/Endeca/Base/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.root}/DAF/Endeca/Assembler/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Other things to watch for in the classpath -->
+	<patternset id="resource.files">
+		<include name="**/*.properties" />
+		<include name="**/*.xml" />
+		<include name="**/*.dtd" />
+	</patternset>
+
+	<!-- This target builds the module, assembles the ear and deploys it to the weblogic domain -->
+	<target name="deploy-ear-wl" depends="init, clean.modules, build.modules, build.ear" description="builds the module, assembles the ear and deploys it to WebLogic" />
+
+    <target name="show.splash">
+        <!--
+            <property name="splash.dir" location="."/>
+            <splash imageurl="http://jakarta.apache.org/images/jakarta-logo.gif" />
+        -->
+        <splash imageurl="file:/Users/subbu/Pictures/oracle-atg.png" progressregexp="Progress: (.*)%" displayText="Build in progress..." />
+    </target>
+
+	<!-- Initializes the build.  This target is not public, but should be called by all the others.	-->
+	<target name="init">
+		<!-- Create the timestamp -->
+		<tstamp />
+		<echo message="" />
+		<echo message="" />
+		<echo message="#############################################################################" />
+		<echo message="#############################################################################" />
+		<echo message="${module.name}: start date = ${DSTAMP}  start time = ${TSTAMP}" />
+		<echo message="JAVA_HOME       	= ${env.JAVA_HOME}" />
+		<echo message="dynamo.home     	= ${dynamo.home}" />
+		<echo message="dynamo.root.dir 	= ${dynamo.root}" />
+		<echo message="wl.home      	= ${wl.home}" />
+		<echo message="install.dir     	= ${install.dir}" />
+		<echo message="deploy.dir     	= ${wl.deploy}" />
+		<echo message="#############################################################################" />
+		<echo message="#############################################################################" />
+		<echo message="" />
+		<echo message="" />
+        <sleep seconds="1"/>
+        <echo>Progress: 10%</echo>
+	</target>
+
+	<!-- Deletes the build and install directories -->
+	<target name="clean.modules" description="Deletes the contents of the install and build directories">
+		<echo message="Deleting..." />
+		<echo message="${wl.deploy}/${asmblr.ear}" />
+		<echo message="${install.dir}" />
+		<delete failonerror="false" includeemptydirs="true" verbose="true">
+			<fileset dir="${deploy.ear}" />
+			<fileset dir="${install.dir}" />
+            <fileset dir="${classes.dir}" />
+            <filename name="${prj.lib}/classes.jar" />
+			<filename name="${prj.lib}/config.jar" />
+		</delete>
+        <sleep seconds="1"/>
+        <echo>Progress: 20%</echo>
+	</target>
+
+	<target name="build.modules" depends="create.dirs, compile.module, jar.modules" description="builds the module">
+        <copy todir="${classes.dir}" verbose="true">
+            <fileset dir="${build.classes.dir}" />
+        </copy>
+
+        <copy todir="${config.dir}" verbose="true">
+            <fileset dir="${build.config.dir}" />
+        </copy>
+        <echo message="Module built..." />
+        <sleep seconds="2"/>
+        <echo>Progress: 50%</echo>
+	</target>
+
+    <!-- Create the directories used in the build process. Not intended to be used publically. -->
+    <target name="create.dirs" description="Creates all the necessary folders for building the modules">
+        <echo message="Creating the directories" />
+        <mkdir dir="${install.dir}" />
+        <mkdir dir="${install.dir}/META-INF" />
+        <mkdir dir="${install.dir}/classes" />
+        <mkdir dir="${install.dir}/config" />
+        <mkdir dir="${install.dir}/liveconfig" />
+        <mkdir dir="${install.dir}/j2ee-apps" />
+        <mkdir dir="${classes.dir}" />
+    </target>
+
+	<!-- Compiles the codebase -->
+	<target name="compile.module" description="Compiles the source code to the classes directory.">
+		<javac fork="true" executable="${env.JAVA_HOME}/bin/javac" compiler="modern" debug="true" srcdir="${src.dir}" destdir="${classes.dir}" failonerror="true" verbose="true">
+			<classpath path="${env.CLASSPATH}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="dynamo.classpath" />
+			<include name="**/*.java" />
+		</javac>
+		<!-- copy java resource files to build directory -->
+		<copy todir="${classes.dir}" failonerror="false">
+			<fileset dir="${src.dir}">
+				<patternset refid="resource.files" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar.modules" depends="jar.classes, jar.config" description="Creates build directories, jars the classes and configuration" />
+	
+	<target name="jar.classes" description="jars classes and source to build directory.">
+		<jar destfile="${build.classes.dir}/classes.jar" basedir="${classes.dir}" />
+	</target>
+	
+	<target name="jar.config" description="jars config files to build directory">
+		<jar destfile="${build.config.dir}/config.jar" basedir="${config.dir}" />
+	</target>
+	
+	<target name="build.ear">
+		<echo message="Building EAR..." />
+        <sleep seconds="2"/>
+        <echo>Progress: 70%</echo>
+		<assemble-ear 
+			dynamoRoot="${dynamo.root}" 
+			destinationFile="${deploy.ear}"
+			displayName="${module.name}" 
+			layer="${dynamo.layers}" 
+			dynamoModules="${dynamo.modules}"
+			standalone="${standalone}"
+			overwrite="${overwrite}" 
+			serverName="${dynamo.server.name}"
+            prependjars=""
+		/>
+		<echo message="Completed building EAR..." />
+        <sleep seconds="2"/>
+        <echo>Progress: 100%</echo>
+	</target>
+
+    <!-- This target will copy over the files within the j2ee apps to the live EAR in JBoss for incremental deployments of changed jsps, etc... -->
+    <target name="dev-deploy-wars" depends="init" description="Copies the J2EE application for the module">
+        <sleep seconds="1"/>
+        <echo>Progress: 20%</echo>
+        <echo message="Install To:   = ${deploy.ear}" />
+        <echo message="Install From: = ${j2ee.module}" />
+        <sleep seconds="2"/>
+        <echo>Progress: 50%</echo>
+        <copy description="Copying j2ee files to deployment" todir="${deploy.ear}" verbose="true">
+            <fileset dir="${j2ee.module}">
+                <exclude name="META-INF/*.*" />
+                <exclude name="WEB-INF/*.*" />
+                <exclude name="build.*" />
+            </fileset>
+        </copy>
+        <sleep seconds="2"/>
+        <echo>Progress: 70%</echo>
+        <sleep seconds="2"/>
+        <echo>Progress: 100%</echo>
+    </target>
+
+</project>

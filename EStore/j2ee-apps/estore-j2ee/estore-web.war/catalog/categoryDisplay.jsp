@@ -1,4 +1,4 @@
-<jsp:include page="../includes/taglibs.jsp"/>
+<%@ taglib uri="/dspel" prefix="dspel"%>
 <dspel:page>
 	This page displays the category properties.
 	

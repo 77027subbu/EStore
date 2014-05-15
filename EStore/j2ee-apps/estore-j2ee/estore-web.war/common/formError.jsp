@@ -3,7 +3,7 @@ This is the page,we can use if we want to display some errors in the page
 Parameters:
       -  formhandler - A formhandler object that may have exceptions
  --%>
-<jsp:include page="../includes/taglibs.jsp"/>
+<%@ taglib uri="/dspel" prefix="dspel"%>
 <dspel:page>
 	<dspel:droplet name="/atg/dynamo/droplet/ErrorMessageForEach">
 		<dspel:param name="exceptions" param="formhandler.formExceptions"/>

@@ -203,5 +203,16 @@
         <sleep seconds="2"/>
         <echo>Progress: 100%</echo>
     </target>
-
+	
+	<target name="copy-to-remote" description="Copies the ear to a remote server">
+		<delete file="${deploy.ear}.zip" failonerror="false" verbose="true" />
+		<zip basedir="${deploy.ear}" compress="true" destfile="${deploy.ear}.zip" />
+		<scp 
+			file="${deploy.ear}.zip" 
+			sftp="true" 
+			trust="true" 
+			todir="subbu:2647@subbu-pro:/home/subbu/Deploy"
+			verbose="true" />
+	</target>
+	
 </project>

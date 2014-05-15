@@ -1,12 +1,11 @@
-<jsp:include page="../includes/taglibs.jsp"/>
-root categories to start navigating
+<%@ taglib uri="/dspel" prefix="dspel"%>
 <dspel:page>
 	<dspel:droplet name="/atg/dynamo/droplet/ForEach">
-   		<dspel:param bean="/atg/userprofiling/Profile.catalog.allRootCategories"
+  	 <dspel:param bean="/atg/userprofiling/Profile.catalog.allRootCategories"
         name="array"/>
   		<dspel:oparam name="output">
 			<br>
-			<dspel:a href="categoryDisplay.jsp">
+			<dspel:a href="catalog/categoryDisplay.jsp">
     			<dspel:valueof param="element.displayName"/>
     			<dspel:param param="element.repositoryId"  name="categoryId"/>
     		</dspel:a>

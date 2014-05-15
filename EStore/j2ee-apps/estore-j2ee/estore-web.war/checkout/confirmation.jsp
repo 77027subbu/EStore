@@ -1,4 +1,4 @@
-<jsp:include page="../includes/taglibs.jsp"/>
+<%@ taglib uri="/dspel" prefix="dspel"%>
 <dspel:page>
 	<dspel:importbean bean="/atg/commerce/ShoppingCart"/>
 	

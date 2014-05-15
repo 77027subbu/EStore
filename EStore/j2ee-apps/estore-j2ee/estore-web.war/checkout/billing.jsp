@@ -1,4 +1,4 @@
-<jsp:include page="../includes/taglibs.jsp"/>
+<%@ taglib uri="/dspel" prefix="dspel"%>
 <dspel:page>
 	<dspel:importbean bean="/atg/commerce/ShoppingCart"/>
 	<dspel:importbean bean="/atg/commerce/order/purchase/PaymentGroupDroplet"/>
@@ -25,7 +25,7 @@
 		 	<tr><td>Please enter the Billing Address.</td></tr>
 		 	<tr><td>CC Type    : <dspel:input bean="PaymentGroupFormHandler.creditCard.creditCardType" name="ccType" maxlength="50" tabindex="1" type="text"/></td></tr>
 		 	<tr><td>CC Number  : <dspel:input bean="PaymentGroupFormHandler.creditCard.creditCardNumber" name="ccNumber" maxlength="50" tabindex="1" type="text"/></td></tr>
-		 	<tr><td>CVC Number  : <dspel:input bean="PaymentGroupFormHandler.creditCard.cardVerificationNumber" name="ccVerification" maxlength="50" tabindex="1" type="text"/></td></tr>
+		 	<tr><td>CC Number  : <dspel:input bean="PaymentGroupFormHandler.creditCard.cardVerificationNumber" name="ccVerification" maxlength="50" tabindex="1" type="text"/></td></tr>
 		 	<tr><td>Exp Month  : <dspel:input bean="PaymentGroupFormHandler.creditCard.expirationMonth" name="expMonth" maxlength="50" tabindex="1" type="text"/></td></tr>
 		 	<tr><td>Exp Year   : <dspel:input bean="PaymentGroupFormHandler.creditCard.expirationYear" name="expYear" maxlength="50" tabindex="1" type="text"/></td></tr>
 			<tr><td>-----------------</td></tr>

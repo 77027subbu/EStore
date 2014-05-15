@@ -1,0 +1,12 @@
+MenuBar {
+   cornerRadius: 11;
+   letterSpacing: 0;
+   backgroundColor: #34243f;
+   fillAlphas: 0.6, 0.08;
+   fillColors: #544e5a, #660066;
+   rollOverColor: #ffffff;
+   color: #4d4d4d;
+   textRollOverColor: #d4bb14;
+   textSelectedColor: #d4bb14;
+   fontFamily: Verdana;
+}

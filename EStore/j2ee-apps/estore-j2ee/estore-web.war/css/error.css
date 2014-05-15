@@ -1,0 +1,138 @@
+.error {
+  color: #c03;
+  font-weight: bold;	
+}
+
+.errorholder
+{
+	background-color: #D4BB16;
+	font-size: 85%;
+	padding: 2px 2px 2px 5px;
+	margin-left: 5px;
+	width: 70px;
+}
+
+#errormsgs {
+	margin-left: 20px;	
+}
+
+.errorfield {
+   	border: 2px solid red;
+}
+
+
+h3 {
+	margin-left: 14px;	
+}
+
+	
+
+.formframe {
+  	background-color: #E5E2EB;
+  	color: #666666;
+	width: 367px;
+	padding: 13px 18px; 
+	margin-top: 14px;
+}
+
+
+
+.formframe fieldset {
+	width: 170px;	
+	margin: 5px;
+	float: left;
+	white-space: nowrap;
+	border: none; 
+
+}
+
+.formframe fieldset.wide {
+    width: 500px;
+}
+
+.formframe fieldset.wide input {
+    width: 350px;
+}
+
+.formframe label 
+{
+	display: block;
+  	background-color: #E5E2EB;
+  	color: #715774;
+  	font-weight: bold;
+  	line-height: 1.3em;
+
+}
+
+.formframe label img
+{
+	margin-bottom: 4px;
+}
+
+.formframe fieldset input 
+{
+	width: 160px;	
+	clear: left;
+}
+
+.formframe span label 
+{
+	display: inline;
+  	background-color: #E5E2EB;
+  	color: #666666;
+  	font-weight: normal;
+  	margin-right: 10px;
+	width: auto;
+	float: none;
+}
+
+.formframe span input 
+{
+	width: auto;	
+	clear: none;
+	margin-left: 5px;
+}
+
+
+.formframe .hr {
+	margin: 10px 5px;
+} 
+
+
+.formframe ul 
+{
+	margin: 10px auto;
+}
+
+.formframe ul li {
+	display: inline;
+	padding-right: 20px;	
+}
+
+.maincontent p {
+ 	clear: left;	
+	margin: 5px; 
+	width: 370px;	
+}
+
+.formframe div.dob {
+	width: auto;	
+}
+
+div.buttons
+{
+	clear: both;	
+}
+
+div.buttons input
+{
+	width: 93px;
+	height: 35px;
+}
+div.buttons input#loginbutton 
+{
+	width: 48px;
+	margin-left: 5px;
+	height: 10px;	
+}
+

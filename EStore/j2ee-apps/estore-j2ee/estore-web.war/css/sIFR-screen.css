@@ -1,0 +1,102 @@
+/* These are standard sIFR styles... do not modify */
+
+.sIFR-flash {
+visibility: visible !important;
+margin: 0;
+top: 0;
+left: 0;
+z-index: -2;}
+
+.sIFR-replaced {
+visibility: visible !important;
+}
+
+span.sIFR-alternate {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 0;
+	height: 0;
+	display: block;
+	overflow: hidden;
+}
+
+.sifr-ghost {
+visibility: visible !important;
+font-family: Arial;
+font-weight: bold;
+font-size: 102% !important;
+
+display: block;
+text-decoration: none;
+line-height: 0;
+position: absolute;
+z-index: 99;
+top: -1px;
+left: 0;
+width: auto;
+padding: 0;
+margin: 0;
+overflow: hidden;
+background-image: none !important;
+}
+
+
+
+/* Hide Adblock Object tab: the text should show up just fine, not poorly with a tab laid over it. */
+.sIFR-flash + div[adblocktab=true] {
+  display: none !important;
+}
+
+/* These "decoy" styles are used to hide the browser text before it is replaced... the negative-letter spacing in this case is used to make the browser text metrics match up with the sIFR text metrics since the sIFR text in this example is so much narrower... your own settings may vary... any weird sizing issues you may run into are usually fixed by tweaking these decoy styles */
+
+
+.sIFR-hasFlash h2 {
+	visibility: hidden;
+	letter-spacing: -11px;
+	font-size: 24px; 
+}
+
+.sIFR-hasFlash h2 img {
+	visibility: visible;
+	letter-spacing: auto;
+	font-size: auto; 
+}
+
+/*
+.sIFR-hasFlash h3 {
+	visibility: hidden;
+	letter-spacing: -6px;
+	font-size: 21px;
+}
+*/
+
+
+.sIFR-hasFlash .feature h3 {
+	visibility: hidden;
+	letter-spacing: -6px;
+	font-size: 21px;
+}
+
+
+
+
+.sIFR-hasFlash h3 img {
+	visibility: visible;
+	letter-spacing: auto;
+	font-size: auto; 
+}
+
+
+
+.sIFR-hasFlash h4 {
+	visibility: hidden;
+	letter-spacing: -5px;
+	font-size: 21px;
+}
+
+.sIFR-hasFlash h4 img {
+	visibility: visible;
+	letter-spacing: auto;
+	font-size: auto; 
+}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.abc.poc.commerce.order.purchase;
+package com.estore.commerce.order.purchase;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +24,7 @@ import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
 
 /**
- * @author Madhulal
+ * @author Subbu
  * 
  */
 public class POCPaymentGroupFormHandler extends PaymentGroupFormHandler {

@@ -5,9 +5,16 @@
 
 	<property file="build.properties" />
 
-	<!-- Define an if and else task for use in this definition -->
+	<!-- Define a task for the runassembler -->
 	<taskdef name="assemble-ear" onerror="report" classname="atg.appassembly.ant.CreateUnpackedEarTask" classpath="${dynamo.home}/lib/assembler.jar" />
-
+	
+	<!-- Define a task for the wl-deploy -->
+	<taskdef name="wl-deploy" classname="weblogic.ant.taskdefs.management.WLDeploy">
+        <classpath>
+            <pathelement path="${wl.server.home}/server/lib/wlfullclient.jar" />
+        </classpath>
+    </taskdef>
+	
 	<!-- The classpath for the project. -->
 	<path id="lib.classpath">
 		<fileset dir="${prj.lib}">
@@ -203,16 +210,125 @@
         <sleep seconds="2"/>
         <echo>Progress: 100%</echo>
     </target>
-	
-	<target name="copy-to-remote" description="Copies the ear to a remote server">
-		<delete file="${deploy.ear}.zip" failonerror="false" verbose="true" />
-		<zip basedir="${deploy.ear}" compress="true" destfile="${deploy.ear}.zip" />
-		<scp 
-			file="${deploy.ear}.zip" 
-			sftp="true" 
-			trust="true" 
-			todir="subbu:2647@subbu-pro:/home/subbu/Deploy"
-			verbose="true" />
+	<!-- 
+		TODO - The steps to copy to remote 
+		1. Delete the existing .tar.bz2 file
+		2. Delete the existing .ear.old folder
+		3. Move the existing folder .ear to .ear.old
+		4. Copy the new .tar.bz2 to /home/subbu/Deploy
+		5. Create a new .ear folder
+		6. un-tar the copied .tar.bz2 file to .ear folder
+		7. execute the wl-deploy
+		8. bounce the server
+	-->
+	<target name="copy-deploy-to-remote-v1" description="Copy and deploy on remote box" depends="create-tar-bz2,  remove-existing-archive, copy-to-remote, remove-existing-old-folder, move-existing-folder, create-new-folder, untar-on-remote">
+		<echo>Deployed on remote box</echo>
 	</target>
 	
+	<target name="copy-deploy-to-remote-v2" description="Copy and deploy on remote box" depends="create-tar-bz2, copy-to-remote">
+		<sshsession 
+			host="subbu-pro"
+			username="subbu"
+			password="2647"
+			>
+			<sequential>
+				<delete file="/home/subbu/Deploy/${asmblr.ear}.tar.bz2" />
+				<delete dir="/home/subbu/Deploy/${asmblr.ear}.old" verbose="true" />
+				<move todir="/home/subbu/Deploy/${asmblr.ear}.old" verbose="true">
+					<fileset dir="/home/subbu/Deploy/${asmblr.ear}" />
+				</move>
+				<mkdir dir="/home/subbu/Deploy/${asmblr.ear}"/>
+				<untar 
+					src="/home/subbu/Deploy/${asmblr.ear}.tar.bz2" 
+					compression="bz2"
+					dest="/home/subbu/Deploy/${asmblr.ear}"
+				/>
+			</sequential>
+		</sshsession>
+	</target>
+	
+	<target name="create-zip" description="Creates a tar bz2 file">
+		<delete file="${deploy.ear}.zip" failonerror="false" verbose="true" />
+		<tar basedir="${deploy.ear}" destfile="${deploy.ear}.zip" compression="true" />
+	</target>
+	
+	<target name="create-tar-bz2" description="Creates a tar bz2 file">
+		<echo>Starting to create the tar.bz2 file at - ${deploy.ear}.tar.bz2</echo>
+		<delete file="${deploy.ear}.tar.bz2" failonerror="false" verbose="true" />
+		<tar basedir="${deploy.ear}" destfile="${deploy.ear}.tar.bz2" compression="bzip2" />
+		<echo>Finished Creating tar at - ${deploy.ear}.tar.bz2</echo>
+	</target>
+	
+	<target name="remove-existing-archive" description="Move existing folder on remote">
+		<echo>Remove the existing archive at - subbu-pro:/home/subbu/Deploy/eStore.ear.tar.bz2</echo>
+		<sshexec 
+			host="subbu-pro" 
+			username="subbu" 
+			password="2647" 
+			command="rm -rf /home/subbu/Deploy/${asmblr.ear}.tar.bz2"/>
+		<echo>Finished removing existing archive at - subbu-pro:/home/subbu/Deploy/eStore.ear.tar.bz2</echo>		
+	</target>
+	
+	<target name="copy-to-remote" description="Copies the tar bz2 file to the remote box">
+		<echo>Copying tar at - ${deploy.ear}.tar.bz2 to - subbu-pro:/home/subbu/Deploy</echo>
+		<scp 
+			file="${deploy.ear}.tar.bz2" 
+			sftp="true" 
+			trust="true" 
+			todir="subbu:2647@subbu-pro:/home/subbu/Deploy"			
+			verbose="true" />
+		<echo>Finished copying tar at - ${deploy.ear}.tar.bz2 to - subbu-pro:/home/subbu/Deploy</echo>
+	</target>
+	
+	<target name="remove-existing-old-folder" description="Move existing folder on remote">
+		<echo>Remove the existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>
+		<sshexec 
+			host="subbu-pro" 
+			username="subbu" 
+			password="2647" 
+			failonerror="false"			
+			command="rm -rf /home/subbu/Deploy/${asmblr.ear}.old"/>
+		<echo>Finished removing existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>		
+	</target>
+	
+	<target name="move-existing-folder" description="Move existing folder on remote">
+		<echo>Moving existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear to subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>
+		<sshexec 
+			host="subbu-pro" 
+			username="subbu" 
+			password="2647" 
+			failonerror="false"
+			command="mv /home/subbu/Deploy/${asmblr.ear} /home/subbu/Deploy/${asmblr.ear}.old"/>
+		<echo>Finished moving existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear to subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>		
+	</target>
+	
+	<target name="create-new-folder" description="Create a new eStore.ear folder on remote">
+		<echo>Moving existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear to subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>
+		<sshexec 
+			host="subbu-pro" 
+			username="subbu" 
+			password="2647" 
+			failonerror="false"
+			command="mkdir /home/subbu/Deploy/${asmblr.ear}"/>
+		<echo>Finished moving existing folder at - subbu-pro:/home/subbu/Deploy/eStore.ear to subbu-pro:/home/subbu/Deploy/eStore.ear.old</echo>		
+	</target>
+	
+	<target name="untar-on-remote" description="Untar on the remote box">
+		<echo>Untarring tar at - ${deploy.ear}.tar.bz2 to - subbu-pro:/home/subbu/Deploy/eStore.ear</echo>
+		<sshexec 
+			host="subbu-pro" 
+			username="subbu" 
+			password="2647" 
+			command="tar -C /home/subbu/Deploy/${asmblr.ear} -xjvf /home/subbu/Deploy/${asmblr.ear}.tar.bz2"/>
+		<echo>Finished un-tarring at - subbu-pro:/home/subbu/Deploy/eStore.ear</echo>
+	</target>
+	
+	<target name="wl-stop" description="Stops the weblogic instance">
+	</target>
+	
+	<target name="wl-start" description="Starts the weblogic instance">
+	</target>
+	
+	<target name="wl-bounce" description="Re-Starts the weblogic instance">
+	</target>
 </project>
